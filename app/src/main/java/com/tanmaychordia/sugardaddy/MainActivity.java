@@ -1,36 +1,34 @@
 package com.tanmaychordia.sugardaddy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
+import android.os.Handler;
+import android.os.Looper;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.db.chart.model.LineSet;
 import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.CircEase;
-import com.parse.ParseUser;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.speech.tts.TextToSpeech;
-import android.widget.TextView;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hound.android.fd.HoundSearchResult;
-import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.fd.Houndify;
+import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.sdk.VoiceSearchInfo;
 import com.hound.android.sdk.audio.SimpleAudioByteStreamSource;
 import com.hound.core.model.sdk.CommandResult;
 import com.hound.core.model.sdk.HoundResponse;
+import com.parse.ParseUser;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private PhraseSpotterReader phraseSpotterReader;
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     TextToSpeechMgr textToSpeechMgr;
+    private int col = 0xCCFF66; // <<-- Put in HEX Code
+    TextView bGlucose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         threshLower.setColor(0x000000);
 
-        threshLower.setDashed(new float[]{10, 10, 10, 10,10,10});
+        threshLower.setDashed(new float[]{10, 10, 10, 10, 10, 10});
         threshLower.setSmooth(true);
         threshLower.setThickness(5);
 
@@ -122,7 +122,28 @@ public class MainActivity extends AppCompatActivity {
         lView.show(anim);
 
 
+        bGlucose = (TextView)findViewById(R.id.bglucose);
 
+
+        setGlucoseLevel(69);
+
+
+
+
+    }
+
+    void setGlucoseLevel(int num)
+    {
+        String ns = Integer.toString(num);
+        int nn = ns.length();
+        ns+= " bp";
+
+        SpannableString ss1=  new SpannableString(ns);
+        ss1.setSpan(new RelativeSizeSpan(2f), 0,nn, 0); // set size
+
+        ss1.setSpan(new ForegroundColorSpan(col), 0, nn, 0);// set color
+
+        bGlucose.setText(ss1);
 
     }
 
@@ -337,6 +358,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.logoutButton) {
             ParseUser.logOut();
             navigateToLogin();
+        }
+        else if(id == R.id.action_settings)
+        {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 //        else if (id== R.id.profileButton){
 //            startActivity(new Intent(this, ProfileActivity.class));

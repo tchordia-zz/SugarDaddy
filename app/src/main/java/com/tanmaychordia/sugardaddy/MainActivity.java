@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private PhraseSpotterReader phraseSpotterReader;
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     TextToSpeechMgr textToSpeechMgr;
-    private int col = 0xCCFF66; // <<-- Put in HEX Code
+    private int col = 0xFF5CB85C; // <<-- Put in HEX Code
     TextView bGlucose;
 
     @Override
@@ -64,24 +64,8 @@ public class MainActivity extends AppCompatActivity {
         Houndify.get(this).setClientKey( Constants.CLIENT_KEY );
         Houndify.get(this).setRequestInfoFactory(StatefulRequestInfoFactory.get(this));
 
-//        ParseUser user = new ParseUser();
-//        user.setUsername("SugarDaddy");
-//        user.setPassword("sugar");
-//        user.setEmail("email@example.com");
-//        user.signUpInBackground(new SignUpCallback() {
-//            public void done(ParseException e) {
-//                if (e == null) {
-//                    // Hooray! Let them use the app now.
-//                } else {
-//                    // Sign up didn't succeed. Look at the ParseException
-//                    // to figure out what went wrong
-//                    System.err.println(e);
-//                }
-//            }
-//        });
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("foo", "bar");
-//        testObject.saveInBackground();
+
+
 
         LineChartView lView= (LineChartView) findViewById(R.id.linechart);
         LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{3f,7f,1f, 2.4f, 18f, 3f});
@@ -109,16 +93,19 @@ public class MainActivity extends AppCompatActivity {
         lView.setAxisThickness(5);
 
 
-        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
 
-        threshLower.setColor(0x000000);
-
-        threshLower.setDashed(new float[]{10, 10, 10, 10, 10, 10});
-        threshLower.setSmooth(true);
-        threshLower.setThickness(5);
+//        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
+//
+//        threshLower.setColor(0x000000);
+//
+//        threshLower.setDashed(new float[]{10, 10, 10, 10, 10, 10});
+//        threshLower.setSmooth(true);
+//        threshLower.setThickness(5);
 
         lView.addData(dataSet);
-        lView.addData(threshLower);
+        lView.addData(createThresh(dataSet, 10));
+        lView.addData(createThresh(dataSet, 20));
+
         lView.show(anim);
 
 
@@ -127,8 +114,47 @@ public class MainActivity extends AppCompatActivity {
 
         setGlucoseLevel(69);
 
+//        ActionBar actionBar = getActionBar();
+//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
+
+
+
+    }
+
+    LineSet createThresh(LineSet d, int height)
+    {
+
+        LineSet thresh = new LineSet();
+        int num = 0;
+        try{
+            for(int i = 0; true; i++)
+            {
+                num = i;
+                String s = d.getLabel(i);
+                thresh.addPoint(s, height);
+
+            }
+
+        }catch(Exception e) {
+
+        }
+
+
+        thresh.setColor(0x000000);
+        thresh.setSmooth(true);
+        thresh.setThickness(5);
+
+
+
+        float[] f = new float[num];
+        for(int i = 0; i < num; i++)
+        {
+            f[i] = height;
+        }
+        thresh.setDashed(f);
+        return thresh;
 
     }
 

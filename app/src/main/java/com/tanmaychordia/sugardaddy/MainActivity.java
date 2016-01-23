@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,7 +14,7 @@ import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.CircEase;
-import com.parse.ParseUser;
+import com.parse.*;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import com.hound.core.model.sdk.HoundResponse;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,6 +84,23 @@ public class MainActivity extends AppCompatActivity {
 //        ParseObject testObject = new ParseObject("TestObject");
 //        testObject.put("foo", "bar");
 //        testObject.saveInBackground();
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("data");
+        query.setLimit(500);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> data, ParseException e) {
+                if (e == null) {
+                    Log.d("Blood Glucose", "Retrieved " + data.size() + " Blood Glucose Data Points");
+                    for(ParseObject person : data) {
+                        Log.d("Blood Glucose", person.getObjectId() + " : " + person.getInt("Bg"));
+                    }
+                }
+                else {
+                    Log.d("Blood Glucose", "Error: " + e.getMessage());
+                }
+            }
+        });
 
         LineChartView lView= (LineChartView) findViewById(R.id.linechart);
         LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{3f,7f,1f, 2.4f, 18f, 3f});

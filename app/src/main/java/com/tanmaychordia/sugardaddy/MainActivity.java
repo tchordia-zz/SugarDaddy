@@ -44,6 +44,7 @@ import com.parse.ParseUser;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private PhraseSpotterReader phraseSpotterReader;
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     TextToSpeechMgr textToSpeechMgr;
-    private int col = 0xCCFF66; // <<-- Put in HEX Code
+    private int col = 0xFFCCFF66; // <<-- Put in HEX Code
     TextView bGlucose;
 
     @Override
@@ -96,22 +97,15 @@ public class MainActivity extends AppCompatActivity {
 //        testObject.put("foo", "bar");
 //        testObject.saveInBackground();
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("data");
-        query.setLimit(500);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> data, ParseException e) {
-                if (e == null) {
-                    Log.d("Blood Glucose", "Retrieved " + data.size() + " Blood Glucose Data Points");
-                    for(ParseObject person : data) {
-                        Log.d("Blood Glucose", person.getObjectId() + " : " + person.getInt("Bg"));
-                    }
-                }
-                else {
-                    Log.d("Blood Glucose", "Error: " + e.getMessage());
-                }
-            }
-        });
+
+
+        float[] bgData = updateGraph();
+
+        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
+        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
+        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
+        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
+        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
 
         LineChartView lView= (LineChartView) findViewById(R.id.linechart);
         LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{3f,7f,1f, 2.4f, 18f, 3f});
@@ -139,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         lView.setAxisThickness(5);
 
 
-        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
+        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10});
 
         threshLower.setColor(0x000000);
 
@@ -156,10 +150,66 @@ public class MainActivity extends AppCompatActivity {
 
 
         setGlucoseLevel(69);
+    }
 
+    float[] updateGraph() {
+        long timeStep = 1445214540000L;
+        float[] results = new float[6];
 
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("data");
+        query.whereEqualTo("flag", 1);
+        try {
+            ParseObject flagged = query.getFirst();
+            timeStep = flagged.getLong("unixTimeStamp");
+            flagged.put("flag", 0);
+            flagged.saveInBackground();
+            Log.d("Find Flag", flagged.getObjectId());
+        }
+        catch(ParseException e) {
+            Log.d("Find Flag", "Error: " + e.getMessage());
+        }
+        query = ParseQuery.getQuery("data");
+        query.orderByAscending("unixTimeStamp");
+        query.whereGreaterThan("unixTimeStamp", timeStep);
+        try {
+            ParseObject nextFlag = query.getFirst();
+            nextFlag.put("flag", 1);
+            nextFlag.saveInBackground();
+            Log.d("Set Next Flag", nextFlag.getObjectId() + " is " + nextFlag.getInt("flag"));
+        }
+        catch(ParseException e) {
+            Log.d("Set Next Flag", "Error: " + e.getMessage());
+        }
+        query = ParseQuery.getQuery("data");
+        query.orderByDescending("unixTimeStamp");
+        query.whereLessThan("unixTimeStamp", timeStep);
+        for(int i = 0; i < 6; i++) {
+            try {
+                ParseObject data = query.getFirst();
+                results[5-i] = (float) data.getInt("Bg");
+                query.whereLessThan("unixTimeStamp", data.getLong("unixTimeStamp"));
+            } catch (ParseException e) {
+                Log.d("Fill Results Array", "Failed");
+            }
+        }
+        /*query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> data, ParseException e) {
+                int i = 0;
 
-
+                if (e == null) {
+                    Log.d("Blood Glucose", "Retrieved " + data.size() + " Blood Glucose Data Points");
+                    for(ParseObject person : data) {
+                        results[i] = person.getInt("Bg");
+                        i++;
+                    }
+                }
+                else {
+                    Log.d("Blood Glucose", "Error: " + e.getMessage());
+                }
+            }
+        });*/
+        return results;
     }
 
     void setGlucoseLevel(int num)

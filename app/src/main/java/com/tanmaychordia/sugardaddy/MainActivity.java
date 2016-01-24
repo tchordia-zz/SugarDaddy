@@ -359,15 +359,19 @@ public class MainActivity extends AppCompatActivity {
                     JsonNode matchedItemNode = commandResult.getJsonNode().findValue("MatchedItem");
                     String intentValue = matchedItemNode.findValue( "Intent").textValue();
 
-                    if ( intentValue.equals("TURN_LIGHT_ON") ) {
+                    /*if ( intentValue.equals("TURN_LIGHT_ON") ) {
                         textToSpeechMgr.speak("Client match TURN LIGHT ON successful");
                     }
                     else if ( intentValue.equals("TURN_LIGHT_OFF") ) {
                         textToSpeechMgr.speak("Client match TURN LIGHT OFF successful");
-                    }
-                    else if ( intentValue.equals("DISPLAY_RESULTS")) {
+                    }*/
+                    if ( intentValue.equals("DISPLAY_RESULTS")) {
                         textToSpeechMgr.speak("Displaying Results.");
                         drawGraph(updateGraph());
+                    }
+                    else if ( intentValue.equals("PARENT_VIEW")) {
+                        Intent intent = new Intent(this, ParentView.class);
+                        startActivity(intent);
                     }
                 }
             }

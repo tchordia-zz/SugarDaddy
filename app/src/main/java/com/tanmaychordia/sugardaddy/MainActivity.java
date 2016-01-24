@@ -23,19 +23,10 @@ import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.CircEase;
 import com.parse.*;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.speech.tts.TextToSpeech;
-import android.widget.TextView;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hound.android.fd.HoundSearchResult;
 import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.fd.Houndify;
-import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.sdk.VoiceSearchInfo;
 import com.hound.android.sdk.audio.SimpleAudioByteStreamSource;
 import com.hound.core.model.sdk.CommandResult;
@@ -73,71 +64,9 @@ public class MainActivity extends AppCompatActivity {
         // Setup TextToSpeech
         textToSpeechMgr = new TextToSpeechMgr( this );
 
-        // Normally you'd only have to do this once in your Application#onCreate
-        Houndify.get(this).setClientId( Constants.CLIENT_ID );
-        Houndify.get(this).setClientKey( Constants.CLIENT_KEY );
-        Houndify.get(this).setRequestInfoFactory(StatefulRequestInfoFactory.get(this));
-
-
-
-
-
-
         float[] bgData = updateGraph();
 
-        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
-        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
-        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
-        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
-        Log.d("Diabetes Data", Arrays.toString(updateGraph()));
-
-        LineChartView lView= (LineChartView) findViewById(R.id.linechart);
-        LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{3f,7f,1f, 2.4f, 18f, 3f});
-//
-        dataSet.setDotsRadius(15);
-        dataSet.setDotsColor(0xFFFFFF);
-        dataSet.setColor(0xBCCACF);
-
-        //dataSet.setGradientFill(new int[]{0xFFFFFF, 0x20CE99}, new float[]{0, 1});
-        lView.setBackgroundColor(0x20CE99);
-//        dataSet.setFill(0x20CE99);
-        dataSet.setDotsStrokeColor(0xBCCACF);
-        dataSet.setDotsStrokeThickness(10);
-
-
-        Animation anim = new Animation(2000);
-        anim.setEasing(new CircEase());
-        lView.setYLabels(AxisController.LabelPosition.NONE);
-//        lView.setYAxis(false);
-
-        Paint p = new Paint();
-
-        p.setColor(0xBCCACF);
-//        lView.setValueThreshold(10, 10, p);
-        lView.setAxisThickness(5);
-
-
-        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10});
-
-//        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
-//
-//        threshLower.setColor(0x000000);
-//
-//        threshLower.setDashed(new float[]{10, 10, 10, 10, 10, 10});
-//        threshLower.setSmooth(true);
-//        threshLower.setThickness(5);
-
-        lView.addData(dataSet);
-        lView.addData(createThresh(dataSet, 10));
-        lView.addData(createThresh(dataSet, 20));
-
-        lView.show(anim);
-
-
-        bGlucose = (TextView)findViewById(R.id.bglucose);
-
-
-        setGlucoseLevel(69);
+        drawGraph(bgData);
     }
 
     float[] updateGraph() {
@@ -198,9 +127,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
         return results;
+    }
+
+    void drawGraph(float[] data) {
+        LineChartView lView= (LineChartView) findViewById(R.id.linechart);
+        LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, data);
+//
+        dataSet.setDotsRadius(15);
+        dataSet.setDotsColor(0xFFFFFF);
+        dataSet.setColor(0xBCCACF);
+
+        //dataSet.setGradientFill(new int[]{0xFFFFFF, 0x20CE99}, new float[]{0, 1});
+        lView.setBackgroundColor(0x20CE99);
+//        dataSet.setFill(0x20CE99);
+        dataSet.setDotsStrokeColor(0xBCCACF);
+        dataSet.setDotsStrokeThickness(10);
 
 
+        Animation anim = new Animation(2000);
+        anim.setEasing(new CircEase());
+        lView.setYLabels(AxisController.LabelPosition.NONE);
+//        lView.setYAxis(false);
 
+        Paint p = new Paint();
+
+        p.setColor(0xBCCACF);
+//        lView.setValueThreshold(10, 10, p);
+        lView.setAxisThickness(5);
+
+
+        //LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10});
+
+//        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
+//
+//        threshLower.setColor(0x000000);
+//
+//        threshLower.setDashed(new float[]{10, 10, 10, 10, 10, 10});
+//        threshLower.setSmooth(true);
+//        threshLower.setThickness(5);
+
+        lView.addData(dataSet);
+        lView.addData(createThresh(dataSet, 70));
+        lView.addData(createThresh(dataSet, 200));
+
+        lView.show(anim);
+
+
+        bGlucose = (TextView)findViewById(R.id.bglucose);
+
+
+        setGlucoseLevel((int) data[5]);
     }
 
     LineSet createThresh(LineSet d, int height)

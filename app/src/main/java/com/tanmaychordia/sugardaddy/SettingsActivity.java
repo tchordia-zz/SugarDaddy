@@ -69,21 +69,20 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child);
 
         // Text view for displaying written result
-        textView = (TextView)findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.textView);
         // Setup TextToSpeech
-        textToSpeechMgr = new TextToSpeechMgr( this );
+        textToSpeechMgr = new TextToSpeechMgr(this);
 
-        cGlucose = (TextView)findViewById(R.id.cglucose);
+        cGlucose = (TextView) findViewById(R.id.cglucose);
         setGlucoseLevel(69);
     }
 
-    void setGlucoseLevel(int num)
-    {
+    void setGlucoseLevel(int num) {
         String ns = Integer.toString(num);
         int nn = ns.length();
-        ns+= " bp";
+        ns += " bp";
 
-        SpannableString ss1=  new SpannableString(ns);
+        SpannableString ss1 = new SpannableString(ns);
         ss1.setSpan(new RelativeSizeSpan(2f), 0, nn, 0); // set size
 
         ss1.setSpan(new ForegroundColorSpan(col), 0, nn, 0);// set color
@@ -93,11 +92,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-
-        /**
-         * This fragment shows general preferences only. It is used when the
-         * activity is showing a two-pane settings UI.
-         */
+    /**
+     * This fragment shows general preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
@@ -163,9 +161,9 @@ public class SettingsActivity extends AppCompatActivity {
      * Called to start the Phrase Spotter
      */
     private void startPhraseSpotting() {
-        if ( phraseSpotterReader == null ) {
+        if (phraseSpotterReader == null) {
             phraseSpotterReader = new PhraseSpotterReader(new SimpleAudioByteStreamSource());
-            phraseSpotterReader.setListener( phraseSpotterListener );
+            phraseSpotterReader.setListener(phraseSpotterListener);
             phraseSpotterReader.start();
         }
     }
@@ -174,7 +172,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // if we don't, we must still be listening for "ok hound" so teardown the phrase spotter
-        if ( phraseSpotterReader != null ) {
+        if (phraseSpotterReader != null) {
             stopPhraseSpotting();
         }
     }
@@ -183,7 +181,7 @@ public class SettingsActivity extends AppCompatActivity {
      * Called to stop the Phrase Spotter
      */
     private void stopPhraseSpotting() {
-        if ( phraseSpotterReader != null ) {
+        if (phraseSpotterReader != null) {
             phraseSpotterReader.stop();
             phraseSpotterReader = null;
         }
@@ -204,7 +202,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public void run() {
                     stopPhraseSpotting();
                     // Now start the HoundifyVoiceSearchActivity to begin the search.
-                    Houndify.get(SettingsActivity.this).voiceSearch( SettingsActivity.this );
+                    Houndify.get(SettingsActivity.this).voiceSearch(SettingsActivity.this);
                 }
             });
         }
@@ -229,12 +227,10 @@ public class SettingsActivity extends AppCompatActivity {
             final HoundSearchResult result = Houndify.get(this).fromActivityResult(resultCode, data);
 
             if (result.hasResult()) {
-                onResponse( result.getResponse() );
-            }
-            else if (result.getErrorType() != null) {
+                onResponse(result.getResponse());
+            } else if (result.getErrorType() != null) {
                 onError(result.getException(), result.getErrorType());
-            }
-            else {
+            } else {
                 textView.setText("Aborted search");
             }
         }
@@ -281,8 +277,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
             }
-        }
-        else {
+        } else {
             textView.setText("Received empty response!");
         }
     }
@@ -304,8 +299,7 @@ public class SettingsActivity extends AppCompatActivity {
             ex.printStackTrace(pw);
             pw.close();
             return sw.toString();
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             return "";
         }
     }
@@ -317,14 +311,14 @@ public class SettingsActivity extends AppCompatActivity {
     class TextToSpeechMgr implements TextToSpeech.OnInitListener {
         private TextToSpeech textToSpeech;
 
-        public TextToSpeechMgr( Activity activity ) {
-            textToSpeech = new TextToSpeech( activity, this );
+        public TextToSpeechMgr(Activity activity) {
+            textToSpeech = new TextToSpeech(activity, this);
         }
 
         @Override
-        public void onInit( int status ) {
+        public void onInit(int status) {
             // Set language to use for playing text
-            if ( status == TextToSpeech.SUCCESS ) {
+            if (status == TextToSpeech.SUCCESS) {
                 int result = textToSpeech.setLanguage(Locale.US);
             }
         }
@@ -334,11 +328,8 @@ public class SettingsActivity extends AppCompatActivity {
          *
          * @param textToSpeak
          */
-        public void speak( String textToSpeak ) {
+        public void speak(String textToSpeak) {
             textToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
         }
     }
-
-
-
 }

@@ -390,6 +390,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
+        else if(id == R.id.refreshButton)
+        {
+
+        }
 //        else if (id== R.id.profileButton){
 //            startActivity(new Intent(this, ProfileActivity.class));
 //        }

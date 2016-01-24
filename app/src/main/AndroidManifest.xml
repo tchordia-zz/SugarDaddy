@@ -46,6 +46,10 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name=".ParentView"
+            android:label="@string/title_activity_parent_view" >
+        </activity>
     </application>
 
 </manifest>

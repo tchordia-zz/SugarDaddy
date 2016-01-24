@@ -2,20 +2,18 @@
 
     <CheckBoxPreference
         android:key="checkbox"
-        android:title="@string/pref_title_social_recommendations"
-        android:summary="@string/pref_description_social_recommendations"
+        android:title="Did you bring your test strips today?"
         android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="checkbox2"
-        android:title="@string/pref_title_social_recommendations"
-        android:summary="@string/pref_description_social_recommendations"
+        android:title="Have you eaten yet?"
+
         android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="checkbox3"
-        android:title="@string/pref_title_social_recommendations"
-        android:summary="@string/pref_description_social_recommendations"
+        android:title="Have you measured today?"
         android:defaultValue="false" />
 
 

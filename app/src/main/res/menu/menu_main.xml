@@ -6,6 +6,9 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/logoutButton" android:title="Logout"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/profileButton" android:title="Edit Profile"
+    <item android:id="@+id/profileButton" android:title="Rajiv's Schedule"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/refreshButton" android:title="Refresh"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

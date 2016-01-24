@@ -108,6 +108,9 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
 
+
+
+
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
@@ -129,7 +132,17 @@ public class SettingsActivity extends AppCompatActivity {
                             if (e == null) {
                                 // Now let's update it with some new data. In this case, only cheatMode and score
                                 // will get sent to the Parse Cloud. playerName hasn't changed.
-                                gameScore.put("didBringStrips", 2);
+                                if(myPref.isEnabled())
+                                {
+                                    System.out.println(10);
+                                    gameScore.put("didBringStrips", 3);
+                                }
+                                else
+                                {
+                                    System.out.println(11);
+                                    gameScore.put("didBringStrips", 2);
+                                }
+
                                 gameScore.put("flag", 1);
                                 gameScore.saveInBackground();
                             }
@@ -153,7 +166,17 @@ public class SettingsActivity extends AppCompatActivity {
                             if (e == null) {
                                 // Now let's update it with some new data. In this case, only cheatMode and score
                                 // will get sent to the Parse Cloud. playerName hasn't changed.
-                                gameScore.put("didEat", 2);
+                                if(myPref2.isEnabled())
+                                {
+                                    System.out.println(20);
+                                    gameScore.put("didEat", 3);
+                                }
+                                else
+                                {
+                                    System.out.println(21);
+                                    gameScore.put("didEat", 2);
+                                }
+
                                 gameScore.put("flag", 1);
                                 gameScore.saveInBackground();
                             }
@@ -178,7 +201,17 @@ public class SettingsActivity extends AppCompatActivity {
                             if (e == null) {
                                 // Now let's update it with some new data. In this case, only cheatMode and score
                                 // will get sent to the Parse Cloud. playerName hasn't changed.
-                                gameScore.put("didMeasure", 2);
+                                if(myPref3.isEnabled())
+                                {
+                                    System.out.println(20);
+                                    gameScore.put("didMeasure", 3);
+                                }
+                                else
+                                {
+                                    System.out.println(21);
+                                    gameScore.put("didMeasure", 2);
+                                }
+
                                 gameScore.put("flag", 1);
                                 gameScore.saveInBackground();
                             }

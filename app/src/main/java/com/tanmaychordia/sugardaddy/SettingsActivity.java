@@ -140,7 +140,6 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    System.out.println(2);
                     Log.v("click", myPref2.getKey());
                     return true;
                 }
@@ -169,7 +168,6 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                     Log.v("click", myPref3.getKey());
-                    System.out.println(2);
                     return true;
                 }
             });

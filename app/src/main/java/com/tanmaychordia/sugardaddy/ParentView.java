@@ -47,8 +47,6 @@ public class ParentView extends AppCompatActivity {
                         if (e == null) {
                             // Now let's update it with some new data. In this case, only cheatMode and score
                             // will get sent to the Parse Cloud. playerName hasn't changed.
-
-                            System.out.println(20);
                             if ( (Integer)gameScore.get("didEat") > 0) {
 
                                 t2.setBackgroundColor(green);

@@ -78,10 +78,29 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
 
         clientMatchList.add(clientMatch0);
 
-        final ClientMatch clientMatch1 = new ClientMatch();
-        clientMatch1.setExpression("(\"Has\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"measured\").[\"today\"]");
+        ClientMatch clientMatch1 = new ClientMatch();
+        //clientMatch1.setExpression("(\"Has\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"measured\").[\"today\"]");
+        clientMatch1.setExpression("Has my child measured today");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
-        query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+        query.whereEqualTo("objectId", "pEXG4z9D9u");
+        try {
+            ParseObject obj = query.getFirst();
+            if(obj.getInt("didMeasure") == 1) {
+                clientMatch1.setSpokenResponse("Yes, your child has measured today");
+                clientMatch1.setSpokenResponseLong("Yes, your child has measured today");
+                clientMatch1.setWrittenResponse("Yes, your child has measured today");
+                clientMatch1.setWrittenResponseLong("Yes, your child has measured today");
+            }
+            else {
+                clientMatch1.setSpokenResponse("No, your child has not measured today");
+                clientMatch1.setSpokenResponseLong("No, your child has not measured today");
+                clientMatch1.setWrittenResponse("No, your child has not measured today");
+                clientMatch1.setWrittenResponseLong("No, your child has not measured today");
+            }
+        }
+        catch(ParseException e) {
+        }
+        /*query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
             public void done(ParseObject gameScore, ParseException e) {
                 if (e == null) {
                     // Now let's update it with some new data. In this case, only cheatMode and score
@@ -100,7 +119,7 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
                     }
                 }
             }
-        });
+        });*/
 
         ObjectNode result1Node = nodeFactory.objectNode();
         result1Node.put("Intent", "PARENT_VIEW");

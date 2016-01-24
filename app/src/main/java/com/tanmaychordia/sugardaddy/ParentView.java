@@ -1,24 +1,26 @@
 package com.tanmaychordia.sugardaddy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.CheckBox;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ParentView extends AppCompatActivity {
 
-    TextView t1;
-    TextView t2;
-    TextView t3;
+    CheckBox t1;
+    CheckBox t2;
+    CheckBox t3;
 
     int red = 0xFFD9534F;
     int green = 0xFF5CB85C;
@@ -27,13 +29,13 @@ public class ParentView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_view);
 
-        t1 = (TextView) findViewById(R.id.stripsInd);
-        t2 = (TextView) findViewById(R.id.foodInd);
-        t3 = (TextView) findViewById(R.id.measInd);
+        t1 = (CheckBox) findViewById(R.id.stripsInd);
+        t2 = (CheckBox) findViewById(R.id.foodInd);
+        t3 = (CheckBox) findViewById(R.id.measInd);
 
-        t1.setBackgroundColor(red);
-        t2.setBackgroundColor(red);
-        t3.setBackgroundColor(red);
+//        t1.setBackgroundColor(red);
+//        t2.setBackgroundColor(red);
+//        t3.setBackgroundColor(red);
 
         TimerTask t = new TimerTask()
         {
@@ -51,15 +53,15 @@ public class ParentView extends AppCompatActivity {
                             System.out.println(20);
                             if ( (Integer)gameScore.get("didEat") > 0) {
 
-                                t2.setBackgroundColor(green);
+                                t2.setChecked(true);
                             }
                             if ( (Integer)gameScore.get("didMeasure") > 0) {
 
-                                t3.setBackgroundColor(green);
+                                t3.setChecked(true);
                             }
                             if ( (Integer)gameScore.get("didBringStrips") > 0) {
 
-                                t1.setBackgroundColor(green);
+                                t1.setChecked(true);
                             }
                         }
                     }
@@ -88,8 +90,12 @@ public class ParentView extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.logout2) {
+            ParseUser.logOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

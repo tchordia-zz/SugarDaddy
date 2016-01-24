@@ -6,36 +6,78 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.tanmaychordia.sugardaddy.ParentView"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:padding="20dp"
+    android:id="@+id/avlayout">
 
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Your Child:"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="40dp"
+        android:layout_weight="0.20"
+        android:gravity="center" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Has Testing Strips"
         android:id="@+id/stripsInd"
-        android:layout_gravity="center"
-        android:layout_weight="0.26"
-        android:gravity="center" />
+        android:layout_gravity="center_vertical"
+        android:checked="false"
+        android:textSize="20dp"
+        android:layout_weight="0.08"
+        android:clickable="false"
+        android:enabled="true" />
 
-    <TextView
+    <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Ate Lunch"
+        android:text="Counted His Calories"
         android:id="@+id/foodInd"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.27"
-        android:gravity="center" />
+        android:checked="false"
+        android:textSize="20dp"
+        android:layout_weight="0.04"
+        android:clickable="false" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Measured his Blood Glucose"
+        android:id="@+id/measInd"
+        android:layout_gravity="center_horizontal"
+        android:checked="false"
+        android:textSize="20dp"
+        android:layout_weight="0.06"
+        android:clickable="false" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Measured Blood Glucose"
-        android:id="@+id/measInd"
+        android:id="@+id/textView4"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.22"
-        android:gravity="center" />
+        android:text="6"
+        android:textSize="80dp"
+        android:gravity="bottom|center"
+        android:layout_weight="0.13"
+        android:textColor="#FF5CB85C" />
+
+    <TextView
+        android:layout_width="344dp"
+        android:layout_height="45dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Day Streak!"
+        android:id="@+id/textView3"
+        android:paddingTop="0dp"
+        android:textSize="40dp"
+        android:paddingLeft="0dp"
+        android:layout_weight="0.24"
+        android:gravity="top|center" />
+
 </LinearLayout>

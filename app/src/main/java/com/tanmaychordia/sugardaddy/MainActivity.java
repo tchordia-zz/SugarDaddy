@@ -21,22 +21,21 @@ import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.CircEase;
-import com.parse.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hound.android.fd.HoundSearchResult;
-import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.fd.Houndify;
+import com.hound.android.libphs.PhraseSpotterReader;
 import com.hound.android.sdk.VoiceSearchInfo;
 import com.hound.android.sdk.audio.SimpleAudioByteStreamSource;
 import com.hound.core.model.sdk.CommandResult;
 import com.hound.core.model.sdk.HoundResponse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private int col = 0xFF5CB85C; // <<-- Put in HEX Code
     final static int numData = 20;
     TextView bGlucose;
+    private boolean isChild;
 
+    public boolean isKid()
+    {
+        return isChild;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,19 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser==null) {
             navigateToLogin();
         }
+
+        isChild = currentUser.getBoolean("isChild");
+        System.out.println(isChild);
+
+        if(isChild)
+        {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+        }
+
 
         // Text view for displaying written result
         textView = (TextView)findViewById(R.id.textView);
@@ -179,9 +196,10 @@ public class MainActivity extends AppCompatActivity {
 //        threshLower.setSmooth(true);
 //        threshLower.setThickness(5);
 
-        lView.addData(dataSet);
+
         lView.addData(createThresh(dataSet, 70));
         lView.addData(createThresh(dataSet, 200));
+        lView.addData(dataSet);
 
         lView.show(anim);
 
@@ -231,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     {
         String ns = Integer.toString(num);
         int nn = ns.length();
-        ns+= " bp";
+        ns+= " mg/dl";
 
         SpannableString ss1=  new SpannableString(ns);
         ss1.setSpan(new RelativeSizeSpan(2f), 0,nn, 0); // set size
@@ -369,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                         textToSpeechMgr.speak("Displaying Results.");
                         drawGraph(updateGraph());
                     }
-                    else if ( intentValue.equals("PARENT_VIEW")) {
+                    else if ( intentValue.equals("PARENT_VIEW") && isKid()) {
                         Intent intent = new Intent(this, ParentView.class);
                         startActivity(intent);
                     }
@@ -433,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateToLogin() {
+    public void navigateToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -459,15 +477,12 @@ public class MainActivity extends AppCompatActivity {
             ParseUser.logOut();
             navigateToLogin();
         }
-        else if(id == R.id.action_settings)
-        {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        }
         else if(id == R.id.profileButton)
         {
-            Intent intent = new Intent(this, ParentView.class);
-            startActivity(intent);
+            if(!isKid()) {
+                Intent intent = new Intent(this, ParentView.class);
+                startActivity(intent);
+            }
         }
 
 //        else if (id== R.id.profileButton){

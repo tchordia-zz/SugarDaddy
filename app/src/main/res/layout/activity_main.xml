@@ -11,7 +11,7 @@
 
 
     <TextView
-        android:layout_width="313dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/bglucose"
@@ -21,7 +21,8 @@
         android:textColor="#778899"
         android:textAlignment="center"
         android:layout_gravity="right"
-        android:layout_weight="0.79" />
+        android:layout_weight="0.32"
+        android:gravity="center" />
 
     <com.db.chart.view.LineChartView
     xmlns:chart="http://schemas.android.com/apk/res-auto"
@@ -31,23 +32,22 @@
     <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="0.32">
 
         <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top|left"
-                android:text="Awaiting search"
 
-                android:textIsSelectable="true"/>
+            android:textIsSelectable="true"/>
 
     </ScrollView>
 
     <com.hound.android.fd.HoundifyButton
             android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="91dp"
+            android:layout_height="71dp"
             android:layout_gravity="center"
     />
 

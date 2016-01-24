@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         float[] f = new float[num];
         for(int i = 0; i < num; i++)
         {
-            f[i] = height;
+            f[i] = 10;
         }
         thresh.setDashed(f);
         return thresh;

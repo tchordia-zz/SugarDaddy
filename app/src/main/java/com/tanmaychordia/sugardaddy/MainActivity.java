@@ -43,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private PhraseSpotterReader phraseSpotterReader;
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private static float[] bgData;
     TextToSpeechMgr textToSpeechMgr;
     private int col = 0xFF5CB85C; // <<-- Put in HEX Code
+    final static int numData = 20;
     TextView bGlucose;
 
     @Override
@@ -64,14 +66,18 @@ public class MainActivity extends AppCompatActivity {
         // Setup TextToSpeech
         textToSpeechMgr = new TextToSpeechMgr( this );
 
-        float[] bgData = updateGraph();
+        bgData = updateGraph();
 
         drawGraph(bgData);
     }
 
-    float[] updateGraph() {
+    static float[] getData() {
+        return bgData;
+    }
+
+    static float[] updateGraph() {
         long timeStep = 1445214540000L;
-        float[] results = new float[6];
+        float[] results = new float[numData];
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("data");
         query.whereEqualTo("flag", 1);
@@ -100,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
         query = ParseQuery.getQuery("data");
         query.orderByDescending("unixTimeStamp");
         query.whereLessThan("unixTimeStamp", timeStep);
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < numData; i++) {
             try {
                 ParseObject data = query.getFirst();
-                results[5-i] = (float) data.getInt("Bg");
+                results[numData-i-1] = (float) data.getInt("Bg");
                 query.whereLessThan("unixTimeStamp", data.getLong("unixTimeStamp"));
             } catch (ParseException e) {
                 Log.d("Fill Results Array", "Failed");
@@ -130,8 +136,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void drawGraph(float[] data) {
+        int length = data.length;
+        String[] labels = new String[length];
+        for(int i = 0; i < length; i++) {
+            labels[i] = Integer.toString(i);
+        }
+
         LineChartView lView= (LineChartView) findViewById(R.id.linechart);
-        LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, data);
+        lView.reset();
+        LineSet dataSet = new LineSet(labels, data);
 //
         dataSet.setDotsRadius(15);
         dataSet.setDotsColor(0xFFFFFF);
@@ -176,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         bGlucose = (TextView)findViewById(R.id.bglucose);
 
 
-        setGlucoseLevel((int) data[5]);
+        setGlucoseLevel((int) data[length-1]);
     }
 
     LineSet createThresh(LineSet d, int height)
@@ -354,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if ( intentValue.equals("DISPLAY_RESULTS")) {
                         textToSpeechMgr.speak("Displaying Results.");
+                        drawGraph(updateGraph());
                     }
                 }
             }

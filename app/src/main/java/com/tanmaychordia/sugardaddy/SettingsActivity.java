@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
         textToSpeechMgr = new TextToSpeechMgr(this);
 
         cGlucose = (TextView) findViewById(R.id.cglucose);
-        setGlucoseLevel(69);
+        setGlucoseLevel((int) MainActivity.getData()[MainActivity.numData - 1]);
     }
 
     void setGlucoseLevel(int num) {

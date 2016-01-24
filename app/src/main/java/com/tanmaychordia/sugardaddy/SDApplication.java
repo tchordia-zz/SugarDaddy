@@ -5,6 +5,7 @@ package com.tanmaychordia.sugardaddy;
  */
 import android.app.Application;
 
+import com.hound.android.fd.Houndify;
 import com.parse.Parse;
 
 /**
@@ -19,6 +20,11 @@ public class SDApplication extends Application {
 //        ParseObject.registerSubclass(ParseUser.class);
 
         Parse.initialize(this,"FYimJTE5WFlhiSGxbvJr7nOZUChcodDWdwViIVOr","lq8acbUQG8UIBUR8obhpUjyQR3uufHKRrwV7Qpcq");
+
+        // Normally you'd only have to do this once in your Application#onCreate
+        Houndify.get(this).setClientId(Constants.CLIENT_ID);
+        Houndify.get(this).setClientKey(Constants.CLIENT_KEY);
+        Houndify.get(this).setRequestInfoFactory(StatefulRequestInfoFactory.get(this));
 
     }
 }

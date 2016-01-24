@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hound.android.fd.DefaultRequestInfoFactory;
 import com.hound.core.model.sdk.ClientMatch;
 import com.hound.core.model.sdk.HoundRequestInfo;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 
@@ -61,11 +65,11 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
         ArrayList<ClientMatch> clientMatchList = new ArrayList<>();
 
         ClientMatch clientMatch0 = new ClientMatch();
-        clientMatch0.setExpression("\"How is my child doing\"");
-        clientMatch0.setSpokenResponse("Displaying Results");
-        clientMatch0.setSpokenResponseLong("Displaying Results");
-        clientMatch0.setWrittenResponse("Displaying Results");
-        clientMatch0.setWrittenResponseLong("Displaying Results");
+        clientMatch0.setExpression("(\"How\"|\"What\").(\"is\"|\"are\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").[\"doing\"]");
+        clientMatch0.setSpokenResponse("His current blood glucose level is "+MainActivity.getData()[MainActivity.numData-1]);
+        clientMatch0.setSpokenResponseLong("His current blood glucose level is "+MainActivity.getData()[MainActivity.numData-1]);
+        clientMatch0.setWrittenResponse("Displaying Results...");
+        clientMatch0.setWrittenResponseLong("Displaying Results...");
 
         final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
         ObjectNode result0Node = nodeFactory.objectNode();
@@ -74,8 +78,42 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
 
         clientMatchList.add(clientMatch0);
 
+        final ClientMatch clientMatch1 = new ClientMatch();
+        clientMatch1.setExpression("(\"Has\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"measured\").[\"today\"]");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
+        query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+            public void done(ParseObject gameScore, ParseException e) {
+                if (e == null) {
+                    // Now let's update it with some new data. In this case, only cheatMode and score
+                    // will get sent to the Parse Cloud. playerName hasn't changed.
+                    if ( (Integer)gameScore.get("didMeasure") > 0) {
+                        clientMatch1.setSpokenResponse("Yes, your child has measured today");
+                        clientMatch1.setSpokenResponseLong("Yes, your child has measured today");
+                        clientMatch1.setWrittenResponse("Yes, your child has measured today");
+                        clientMatch1.setWrittenResponseLong("Yes, your child has measured today");
+                    }
+                    else {
+                        clientMatch1.setSpokenResponse("No, your child has not measured today");
+                        clientMatch1.setSpokenResponseLong("No, your child has not measured today");
+                        clientMatch1.setWrittenResponse("No, your child has not measured today");
+                        clientMatch1.setWrittenResponseLong("No, your child has not measured today");
+                    }
+                }
+            }
+        });
+
+        ObjectNode result1Node = nodeFactory.objectNode();
+        result1Node.put("Intent", "PARENT_VIEW");
+        clientMatch1.setResult(result1Node);
+
+        clientMatchList.add(clientMatch1);
+
+        //ClientMatch clientMatch2 = new ClientMatch();
+        //clientMatch2.setExpression("(\"How\").(\"many\").(\"strips\").(\"does\").(\"my\").(\"child\").(\"have\")");
+
+
         // client match 1
-        ClientMatch clientMatch1 = new ClientMatch();
+        /*ClientMatch clientMatch1 = new ClientMatch();
         clientMatch1.setExpression("([1/100 (\"can\"|\"could\"|\"will\"|\"would\").\"you\"].[1/10 \"please\"].(\"turn\"|\"switch\"|(1/100 \"flip\")).\"on\".[\"the\"].(\"light\"|\"lights\").[1/20 \"for\".\"me\"].[1/20 \"please\"]) \n" +
                 "| \n" +
                 "([1/100 (\"can\"|\"could\"|\"will\"|\"would\").\"you\"].[1/10 \"please\"].[100 (\"turn\"|\"switch\"|(1/100 \"flip\"))].[\"the\"].(\"light\"|\"lights\").\"on\".[1/20 \"for\".\"me\"].[1/20 \"please\"]) \n" +
@@ -87,6 +125,7 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
         clientMatch1.setWrittenResponse("Ok, I'm turning the lights on.");
         clientMatch1.setWrittenResponseLong("Ok, I am turning the lights on.");
 
+        //final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
         ObjectNode result1Node = nodeFactory.objectNode();
         result1Node.put("Intent", "TURN_LIGHT_ON");
         clientMatch1.setResult(result1Node);
@@ -112,7 +151,7 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
         clientMatch2.setResult(result2Node);
 
         // add next client match data to the array/list
-        clientMatchList.add(clientMatch2);
+        clientMatchList.add(clientMatch2);*/
 
         // add as many more client match entries as you like...
 

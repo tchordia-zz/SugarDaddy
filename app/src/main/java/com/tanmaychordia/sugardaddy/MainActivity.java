@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -20,10 +21,12 @@ import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.CircEase;
+import com.parse.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hound.android.fd.HoundSearchResult;
-import com.hound.android.fd.Houndify;
 import com.hound.android.libphs.PhraseSpotterReader;
+import com.hound.android.fd.Houndify;
 import com.hound.android.sdk.VoiceSearchInfo;
 import com.hound.android.sdk.audio.SimpleAudioByteStreamSource;
 import com.hound.core.model.sdk.CommandResult;
@@ -32,14 +35,18 @@ import com.parse.ParseUser;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private PhraseSpotterReader phraseSpotterReader;
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private static float[] bgData;
     TextToSpeechMgr textToSpeechMgr;
     private int col = 0xFF5CB85C; // <<-- Put in HEX Code
+    final static int numData = 20;
     TextView bGlucose;
 
     @Override
@@ -59,16 +66,85 @@ public class MainActivity extends AppCompatActivity {
         // Setup TextToSpeech
         textToSpeechMgr = new TextToSpeechMgr( this );
 
-        // Normally you'd only have to do this once in your Application#onCreate
-        Houndify.get(this).setClientId( Constants.CLIENT_ID );
-        Houndify.get(this).setClientKey( Constants.CLIENT_KEY );
-        Houndify.get(this).setRequestInfoFactory(StatefulRequestInfoFactory.get(this));
+        bgData = updateGraph();
 
+        drawGraph(bgData);
+    }
 
+    static float[] getData() {
+        return bgData;
+    }
 
+    static float[] updateGraph() {
+        long timeStep = 1445214540000L;
+        float[] results = new float[numData];
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("data");
+        query.whereEqualTo("flag", 1);
+        try {
+            ParseObject flagged = query.getFirst();
+            timeStep = flagged.getLong("unixTimeStamp");
+            flagged.put("flag", 0);
+            flagged.saveInBackground();
+            Log.d("Find Flag", flagged.getObjectId());
+        }
+        catch(ParseException e) {
+            Log.d("Find Flag", "Error: " + e.getMessage());
+        }
+        query = ParseQuery.getQuery("data");
+        query.orderByAscending("unixTimeStamp");
+        query.whereGreaterThan("unixTimeStamp", timeStep);
+        try {
+            ParseObject nextFlag = query.getFirst();
+            nextFlag.put("flag", 1);
+            nextFlag.saveInBackground();
+            Log.d("Set Next Flag", nextFlag.getObjectId() + " is " + nextFlag.getInt("flag"));
+        }
+        catch(ParseException e) {
+            Log.d("Set Next Flag", "Error: " + e.getMessage());
+        }
+        query = ParseQuery.getQuery("data");
+        query.orderByDescending("unixTimeStamp");
+        query.whereLessThan("unixTimeStamp", timeStep);
+        for(int i = 0; i < numData; i++) {
+            try {
+                ParseObject data = query.getFirst();
+                results[numData-i-1] = (float) data.getInt("Bg");
+                query.whereLessThan("unixTimeStamp", data.getLong("unixTimeStamp"));
+            } catch (ParseException e) {
+                Log.d("Fill Results Array", "Failed");
+            }
+        }
+        /*query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> data, ParseException e) {
+                int i = 0;
+
+                if (e == null) {
+                    Log.d("Blood Glucose", "Retrieved " + data.size() + " Blood Glucose Data Points");
+                    for(ParseObject person : data) {
+                        results[i] = person.getInt("Bg");
+                        i++;
+                    }
+                }
+                else {
+                    Log.d("Blood Glucose", "Error: " + e.getMessage());
+                }
+            }
+        });*/
+        return results;
+    }
+
+    void drawGraph(float[] data) {
+        int length = data.length;
+        String[] labels = new String[length];
+        for(int i = 0; i < length; i++) {
+            labels[i] = Integer.toString(i);
+        }
 
         LineChartView lView= (LineChartView) findViewById(R.id.linechart);
-        LineSet dataSet = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{3f,7f,1f, 2.4f, 18f, 3f});
+        lView.reset();
+        LineSet dataSet = new LineSet(labels, data);
 //
         dataSet.setDotsRadius(15);
         dataSet.setDotsColor(0xFFFFFF);
@@ -93,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         lView.setAxisThickness(5);
 
 
+        //LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10});
 
 //        LineSet threshLower = new LineSet(new String[]{"1", "2", "3", "4", "5", "6"}, new float[]{10,10,10,10,10,10,});
 //
@@ -103,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
 //        threshLower.setThickness(5);
 
         lView.addData(dataSet);
-        lView.addData(createThresh(dataSet, 10));
-        lView.addData(createThresh(dataSet, 20));
+        lView.addData(createThresh(dataSet, 70));
+        lView.addData(createThresh(dataSet, 200));
 
         lView.show(anim);
 
@@ -112,15 +189,7 @@ public class MainActivity extends AppCompatActivity {
         bGlucose = (TextView)findViewById(R.id.bglucose);
 
 
-        setGlucoseLevel(69);
-
-//        ActionBar actionBar = getActionBar();
-//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-
-
-
+        setGlucoseLevel((int) data[length-1]);
     }
 
     LineSet createThresh(LineSet d, int height)
@@ -290,14 +359,19 @@ public class MainActivity extends AppCompatActivity {
                     JsonNode matchedItemNode = commandResult.getJsonNode().findValue("MatchedItem");
                     String intentValue = matchedItemNode.findValue( "Intent").textValue();
 
-                    if ( intentValue.equals("TURN_LIGHT_ON") ) {
+                    /*if ( intentValue.equals("TURN_LIGHT_ON") ) {
                         textToSpeechMgr.speak("Client match TURN LIGHT ON successful");
                     }
                     else if ( intentValue.equals("TURN_LIGHT_OFF") ) {
                         textToSpeechMgr.speak("Client match TURN LIGHT OFF successful");
-                    }
-                    else if ( intentValue.equals("DISPLAY_RESULTS")) {
+                    }*/
+                    if ( intentValue.equals("DISPLAY_RESULTS")) {
                         textToSpeechMgr.speak("Displaying Results.");
+                        drawGraph(updateGraph());
+                    }
+                    else if ( intentValue.equals("PARENT_VIEW")) {
+                        Intent intent = new Intent(this, ParentView.class);
+                        startActivity(intent);
                     }
                 }
             }

@@ -90,7 +90,7 @@ if (project.hasProperty("houndifyProperties")) {
         if (p.username != null) {
             propertyFileHasHoundifyUsername = true;
             println "Using " + houndifyProperties + " for houndify repo"
-            setHoundifyMavenCredentials("alecwang97@gmail.com", "pennappsxiii")
+            setHoundifyMavenCredentials("ys.thedood@gmail.com", "pennappsxiii")
         }
     } else {
         throw new FileNotFoundException("Unable to find houndifyMavenProperties file at " + signingProperties)

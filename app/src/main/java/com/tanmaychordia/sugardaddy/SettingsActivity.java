@@ -182,7 +182,6 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    System.out.println(2);
                     Log.v("click", myPref2.getKey());
                     preference.setSelectable(false);
                     preference.setEnabled(false);

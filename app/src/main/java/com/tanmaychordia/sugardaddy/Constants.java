@@ -4,6 +4,6 @@ package com.tanmaychordia.sugardaddy;
  * General constants.
  */
 public class Constants {
-    public static final String CLIENT_ID = "MPX6IP3bSJH6raRTDG8Qnw==";
-    public static final String CLIENT_KEY = "q06qB8u1QBZdagGu8ayNkBHVx7uAAT8D8VW7xutgjZ-EKkc7ZSRhsI8jpWzKhv9usI_BbxrdS0ymLvk584PWvw==";
+    public static final String CLIENT_ID = "XLBPY1ePYrdaFQY0O3dnkA==";
+    public static final String CLIENT_KEY = "1OcsgJlFGB6WypRCQ8aFf4Z0K6w3j0ClIN5pbQpae3NfVhuA0VDNRR_QIJ0Q1TYp76YPOuTRpkiE0KNenilukA==";
 }

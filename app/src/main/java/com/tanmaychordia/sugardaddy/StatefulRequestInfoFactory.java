@@ -78,10 +78,29 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
 
         clientMatchList.add(clientMatch0);
 
-        final ClientMatch clientMatch1 = new ClientMatch();
-        clientMatch1.setExpression("(\"Has\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"measured\").[\"today\"]");
+        ClientMatch clientMatch1 = new ClientMatch();
+        //clientMatch1.setExpression("(\"Has\").[(\"my\"|\"the\")].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"measured\").[\"today\"]");
+        clientMatch1.setExpression("Has my child measured today");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
-        query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+        query.whereEqualTo("objectId", "pEXG4z9D9u");
+        try {
+            ParseObject obj = query.getFirst();
+            if(obj.getInt("didMeasure") == 1) {
+                clientMatch1.setSpokenResponse("Yes, your child has measured today");
+                clientMatch1.setSpokenResponseLong("Yes, your child has measured today");
+                clientMatch1.setWrittenResponse("Yes, your child has measured today");
+                clientMatch1.setWrittenResponseLong("Yes, your child has measured today");
+            }
+            else {
+                clientMatch1.setSpokenResponse("No, your child has not measured today");
+                clientMatch1.setSpokenResponseLong("No, your child has not measured today");
+                clientMatch1.setWrittenResponse("No, your child has not measured today");
+                clientMatch1.setWrittenResponseLong("No, your child has not measured today");
+            }
+        }
+        catch(ParseException e) {
+        }
+        /*query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
             public void done(ParseObject gameScore, ParseException e) {
                 if (e == null) {
                     // Now let's update it with some new data. In this case, only cheatMode and score
@@ -100,13 +119,41 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
                     }
                 }
             }
-        });
+        });*/
 
         ObjectNode result1Node = nodeFactory.objectNode();
         result1Node.put("Intent", "PARENT_VIEW");
         clientMatch1.setResult(result1Node);
 
         clientMatchList.add(clientMatch1);
+
+        ClientMatch clientMatch2 = new ClientMatch();
+        //clientMatch2.setExpression("(\"How\"|\"When\").[\"long\"].(\"has\"|\"was\").[\"it\"].[\"been\"].[\"since\"].[\"my\"].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"has\"|\"last\").(\"ate\"|\"eaten\")");
+        clientMatch2.setExpression("How long has it been since my child last ate");
+        clientMatch2.setSpokenResponse("1 hour and 36 minutes");
+        clientMatch2.setSpokenResponseLong("1 hour and 36 minutes");
+        clientMatch2.setWrittenResponse("1 hour and 36 minutes");
+        clientMatch2.setWrittenResponseLong("1 hour and 36 minutes");
+
+        ObjectNode result2Node = nodeFactory.objectNode();
+        result2Node.put("Intent", "OTHER_VIEW");
+        clientMatch2.setResult(result2Node);
+
+        clientMatchList.add(clientMatch2);
+
+        ClientMatch clientMatch3 = new ClientMatch();
+        //clientMatch3.setExpression("[\"What\"].(\"is\").[\"going\"].[\"to\"].[\"be\"](\"the\"|\"his\"|\"her\").(\"projected\"|\"expected\").(\"high\"|\"highest\").[\"blood\"].(\"sugar\"|\"glucose\").[\"for\"].[\"today\"]");
+        clientMatch3.setExpression("What is the projected high blood sugar for today");
+        clientMatch3.setSpokenResponse("250");
+        clientMatch3.setSpokenResponseLong("250");
+        clientMatch3.setWrittenResponse("250");
+        clientMatch3.setWrittenResponseLong("250");
+
+        ObjectNode result3Node = nodeFactory.objectNode();
+        result3Node.put("Intent", "OTHER_VIEW");
+        clientMatch3.setResult(result3Node);
+
+        clientMatchList.add(clientMatch3);
 
         //ClientMatch clientMatch2 = new ClientMatch();
         //clientMatch2.setExpression("(\"How\").(\"many\").(\"strips\").(\"does\").(\"my\").(\"child\").(\"have\")");

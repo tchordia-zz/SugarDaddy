@@ -127,6 +127,34 @@ public class StatefulRequestInfoFactory extends DefaultRequestInfoFactory {
 
         clientMatchList.add(clientMatch1);
 
+        ClientMatch clientMatch2 = new ClientMatch();
+        //clientMatch2.setExpression("(\"How\"|\"When\").[\"long\"].(\"has\"|\"was\").[\"it\"].[\"been\"].[\"since\"].[\"my\"].(\"kid\"|\"child\"|\"children\"|\"son\"|\"daughter\").(\"has\"|\"last\").(\"ate\"|\"eaten\")");
+        clientMatch2.setExpression("How long has it been since my child last ate");
+        clientMatch2.setSpokenResponse("1 hour and 36 minutes");
+        clientMatch2.setSpokenResponseLong("1 hour and 36 minutes");
+        clientMatch2.setWrittenResponse("1 hour and 36 minutes");
+        clientMatch2.setWrittenResponseLong("1 hour and 36 minutes");
+
+        ObjectNode result2Node = nodeFactory.objectNode();
+        result2Node.put("Intent", "OTHER_VIEW");
+        clientMatch2.setResult(result2Node);
+
+        clientMatchList.add(clientMatch2);
+
+        ClientMatch clientMatch3 = new ClientMatch();
+        //clientMatch3.setExpression("[\"What\"].(\"is\").[\"going\"].[\"to\"].[\"be\"](\"the\"|\"his\"|\"her\").(\"projected\"|\"expected\").(\"high\"|\"highest\").[\"blood\"].(\"sugar\"|\"glucose\").[\"for\"].[\"today\"]");
+        clientMatch3.setExpression("What is the projected high blood sugar for today");
+        clientMatch3.setSpokenResponse("250");
+        clientMatch3.setSpokenResponseLong("250");
+        clientMatch3.setWrittenResponse("250");
+        clientMatch3.setWrittenResponseLong("250");
+
+        ObjectNode result3Node = nodeFactory.objectNode();
+        result3Node.put("Intent", "OTHER_VIEW");
+        clientMatch3.setResult(result3Node);
+
+        clientMatchList.add(clientMatch3);
+
         //ClientMatch clientMatch2 = new ClientMatch();
         //clientMatch2.setExpression("(\"How\").(\"many\").(\"strips\").(\"does\").(\"my\").(\"child\").(\"have\")");
 

@@ -8,14 +8,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,6 +27,10 @@ import com.hound.android.sdk.VoiceSearchInfo;
 import com.hound.android.sdk.audio.SimpleAudioByteStreamSource;
 import com.hound.core.model.sdk.CommandResult;
 import com.hound.core.model.sdk.HoundResponse;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -110,45 +115,106 @@ public class SettingsActivity extends AppCompatActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
 
+            final Preference myPref = findPreference("checkbox");
+
+            myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    //open browser or intent here
+                    Log.v("click", myPref.getKey());
+
+
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
+
+
+                    query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+                        public void done(ParseObject gameScore, ParseException e) {
+                            if (e == null) {
+                                // Now let's update it with some new data. In this case, only cheatMode and score
+                                // will get sent to the Parse Cloud. playerName hasn't changed.
+                                gameScore.put("didBringStrips", 2);
+                                gameScore.put("flag", 1);
+                                gameScore.saveInBackground();
+                            }
+                        }
+                    });
+
+                    return true;
+                }
+            });
+
+            final Preference myPref2 = findPreference("checkbox2");
+
+            myPref2.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    //open browser or intent here
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
+
+
+                    query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+                        public void done(ParseObject gameScore, ParseException e) {
+                            if (e == null) {
+                                // Now let's update it with some new data. In this case, only cheatMode and score
+                                // will get sent to the Parse Cloud. playerName hasn't changed.
+                                gameScore.put("didEat", 2);
+                                gameScore.put("flag", 1);
+                                gameScore.saveInBackground();
+                            }
+                        }
+                    });
+                    System.out.println(2);
+                    Log.v("click", myPref2.getKey());
+                    return true;
+                }
+            });
+
+            final Preference myPref3 = findPreference("checkbox3");
+
+            myPref3.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    //open browser or intent here
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("checkListMaster");
+
+
+                    query.getInBackground("pEXG4z9D9u", new GetCallback<ParseObject>() {
+                        public void done(ParseObject gameScore, ParseException e) {
+                            if (e == null) {
+                                // Now let's update it with some new data. In this case, only cheatMode and score
+                                // will get sent to the Parse Cloud. playerName hasn't changed.
+                                gameScore.put("didMeasure", 2);
+                                gameScore.put("flag", 1);
+                                gameScore.saveInBackground();
+                            }
+                        }
+                    });
+                    Log.v("click", myPref3.getKey());
+                    System.out.println(2);
+                    return true;
+                }
+            });
+
+
+
         }
 
-        /**
-         * Binds a preference's summary to its value. More specifically, when the
-         * preference's value is changed, its summary (line of text below the
-         * preference title) is updated to reflect the value. The summary is also
-         * immediately updated upon calling this method. The exact display format is
-         * dependent on the type of preference.
-         *
-         * @see #sBindPreferenceSummaryToValueListener
-         */
-        private static void bindPreferenceSummaryToValue(Preference preference) {
-            // Set the listener to watch for value changes.
-            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
-            // Trigger the listener immediately with the preference's
-            // current value.
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getString(preference.getKey(), ""));
-        }
-
-        /**
-         * A preference value change listener that updates the preference's summary
-         * to reflect its new value.
-         */
-        private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                String stringValue = value.toString();
+//        /**
+//         * Binds a preference's summary to its value. More specifically, when the
+//         * preference's value is changed, its summary (line of text below the
+//         * preference title) is updated to reflect the value. The summary is also
+//         * immediately updated upon calling this method. The exact display format is
+//         * dependent on the type of preference.
+//         *
+//         * @see #sBindPreferenceSummaryToValueListener
+//         */
+//        private static void bindPreferenceSummaryToValue(Preference preference) {
+//            // Set the listener to watch for value changes.
+//            preference.setOnPreferenceClickListener(sBindPreferenceSummaryToValueListener);
+//
+//
+//        }
 
 
-                preference.setEnabled(false);
-                System.out.println();
 
-                return true;
-            }
-        };
 
 
     }
